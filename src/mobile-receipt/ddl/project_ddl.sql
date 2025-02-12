@@ -147,8 +147,10 @@ CREATE TABLE `review` (
   `modified_at` TIMESTAMP NOT NULL,
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`review_id`),
-  CONSTRAINT `FK_USER_REVIEW` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
-  CONSTRAINT `FK_STORE_REVIEW` FOREIGN KEY (`store_id`) REFERENCES `store`(`store_id`)
+  -- 25-02-12 하채린: 회원 삭제될 때 같이 삭제되게 수정
+  CONSTRAINT `FK_USER_REVIEW` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
+  -- 25-02-12 하채린: 매장 삭제될 때 같이 삭제되게 수정
+  CONSTRAINT `FK_STORE_REVIEW` FOREIGN KEY (`store_id`) REFERENCES `store`(`store_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 12. comment
@@ -161,23 +163,26 @@ CREATE TABLE `comment` (
   `modified_at` TIMESTAMP NOT NULL,
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`comment_id`),
-  CONSTRAINT `FK_USER_COMMENT` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
-  CONSTRAINT `FK_REVIEW_COMMENT` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`)
+  -- 25-02-12 하채린: 회원 삭제될 때 같이 삭제되게 수정 
+  CONSTRAINT `FK_USER_COMMENT` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE ,
+  -- 25-02-12 하채린: 리뷰 삭제될 때 같이 삭제되게 수정 
+  CONSTRAINT `FK_REVIEW_COMMENT` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`) ON DELETE CASCADE 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 13. review_like
--- 2025-02-12 박양하: like은 예약어 이므로 review_like으로 테이블명 변경
-
+-- like는 예약어이므로 백틱(`)으로 감싸야 함
 CREATE TABLE `review_like` (
-  `like_id` BIGINT NOT NULL AUTO_INCREMENT,
+-- 25-02-12 하채린: like_id -> review_like_id 로 수정 
+  `review_like_id` BIGINT NOT NULL AUTO_INCREMENT,
   `review_id` BIGINT NOT NULL,
   `user_id` VARCHAR(30) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
-  PRIMARY KEY (`like_id`),
+  `created_at` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`review_like_id`),
   -- 2025-02-11 박양하: UNIQUE 조건 추가(user_id당 하나의 review에 한 번의 좋아요 가능)
   UNIQUE (`review_id`, `user_id`),
-  CONSTRAINT `FK_REVIEW_LIKE` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`),
-  CONSTRAINT `FK_USER_LIKE` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+  -- 25-02-12 리뷰 삭제 시 같이 삭제됨 
+  CONSTRAINT `FK_REVIEW_LIKE` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_USER_LIKE` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 14. review_image
@@ -187,7 +192,8 @@ CREATE TABLE `review_image` (
 -- 2025-02-11 박양하:  ERD와 Type 매칭 TEXT -> VARCHAR(255) DEFAULT 설정 임의 설정 후 Not null로 제약조건  변경)
   `review_image_url` VARCHAR(255) NOT NULL DEFAULT('https://billon.com/review_test_url/'),
   PRIMARY KEY (`review_image_id`),
-  CONSTRAINT `FK_REVIEW_IMAGE` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`)
+  -- 25-02-12 하채린: 리뷰 삭제 시 같이 삭제됨
+  CONSTRAINT `FK_REVIEW_IMAGE` FOREIGN KEY (`review_id`) REFERENCES `review`(`review_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 15. point
