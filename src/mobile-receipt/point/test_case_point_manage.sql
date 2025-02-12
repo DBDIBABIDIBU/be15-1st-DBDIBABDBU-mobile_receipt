@@ -1,7 +1,8 @@
+-- test_case_point_manage.sql
 -- 테스트를 위한 초기 데이터 설정
 -- 1. authority 데이터 생성
 INSERT INTO `authority` (authority_id, authority_name) 
-VALUES (1, 'ROLE_USER');
+VALUES (1, 'User');
 
 -- 2. 테스트용 store 생성을 위한 category 생성
 INSERT INTO `category` (category_id, category_name, created_at, modified_at)
