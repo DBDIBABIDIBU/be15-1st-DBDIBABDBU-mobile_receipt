@@ -60,8 +60,10 @@ CREATE TABLE `store` (
   `address_detail` VARCHAR(90) NOT NULL,
   `business_hours` VARCHAR(255) NOT NULL,
   `average_rating` DECIMAL(2, 1) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
-  `modified_at` TIMESTAMP NOT NULL,
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `modified_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`store_id`),
   CONSTRAINT `FK_USER_STORE` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
@@ -143,8 +145,10 @@ CREATE TABLE `review` (
   -- 2025-02-11 박양하: content VARCHAR(255) -> TEXT로 변경
   `content` TEXT NOT NULL,
   `rating` INT NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
-  `modified_at` TIMESTAMP NOT NULL,
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `modified_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`review_id`),
   -- 25-02-12 하채린: 회원 삭제될 때 같이 삭제되게 수정
@@ -159,8 +163,10 @@ CREATE TABLE `comment` (
   `user_id` VARCHAR(30) NOT NULL,
   `review_id` BIGINT NOT NULL,
   `content` VARCHAR(255) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
-  `modified_at` TIMESTAMP NOT NULL,
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `modified_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`comment_id`),
   -- 25-02-12 하채린: 회원 삭제될 때 같이 삭제되게 수정 
@@ -170,13 +176,14 @@ CREATE TABLE `comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 13. review_like
--- like는 예약어이므로 백틱(`)으로 감싸야 함
+-- like는 예약어이므로 백틱(`)으로 감싸야 함.
 CREATE TABLE `review_like` (
 -- 25-02-12 하채린: like_id -> review_like_id 로 수정 
   `review_like_id` BIGINT NOT NULL AUTO_INCREMENT,
   `review_id` BIGINT NOT NULL,
   `user_id` VARCHAR(30) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
+  -- 25-02-12 하채린 : DEFAULT(NOW()) 추가
+  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   PRIMARY KEY (`review_like_id`),
   -- 2025-02-11 박양하: UNIQUE 조건 추가(user_id당 하나의 review에 한 번의 좋아요 가능)
   UNIQUE (`review_id`, `user_id`),
