@@ -12,8 +12,8 @@ CREATE TABLE `authority` (
 CREATE TABLE `category` (
   `category_id` BIGINT NOT NULL AUTO_INCREMENT,
   `category_name` VARCHAR(60) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
-  `modified_at` TIMESTAMP NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT NOW(),
+  `modified_at` TIMESTAMP NOT NULL DEFAULT NOW(),
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -24,7 +24,7 @@ CREATE TABLE `user` (
   `authority_id` INT NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   `user_name` VARCHAR(50) NOT NULL DEFAULT '홍길동',
-  `contact_number` VARCHAR(11) NOT NULL,
+  `contact_number` VARCHAR(15) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `age` INT NOT NULL,
   `gender` ENUM('M','F') NOT NULL,
@@ -33,12 +33,15 @@ CREATE TABLE `user` (
 -- 2025-02-12 박양하: boolean을 ENUM Y,N 으로 처리하기로 했으나 아래 정보제공동의와 알림수신동의가  TINYINT로 선언되어 타입 수정
   `is_alarm_enabled` ENUM('Y','N') NOT NULL DEFAULT('N'),
   `is_consent_provided` ENUM('Y','N') NOT NULL DEFAULT('N'),
-  `account_status` ENUM('휴면','탈퇴','정지') NOT NULL,
+-- 2025-02-12 박성용: ENUM 활성 추가. DEFAULT 활성으로 설정
+  `account_status` ENUM('휴면','탈퇴','정지', '활성') NOT NULL DEFAULT('활성'),
   `reported_count` INT NOT NULL DEFAULT 0,
-  `created_at` TIMESTAMP NOT NULL,
-  `modified_at` TIMESTAMP NOT NULL,
+--  2025-02-12 박성용: created_at 및 modifed_at default 값 설정
+  `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
+  `modified_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   `deleted_at` TIMESTAMP NULL,
-  `remaining_point` DECIMAL(10,2) NULL,
+--  2025-02-12 박성용: remaining_point type INT로 변경 및 DEFAULT 0으로 설정
+  `remaining_point` INT NULL DEFAULT(0),
   PRIMARY KEY (`user_id`),
   CONSTRAINT `FK_AUTHORITY` FOREIGN KEY (`authority_id`) REFERENCES `authority`(`authority_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
