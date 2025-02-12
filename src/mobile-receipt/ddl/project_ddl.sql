@@ -131,6 +131,8 @@ CREATE TABLE `point_product` (
   `product_name` VARCHAR(100) NOT NULL,
   `price` INT NOT NULL,
   `quantity` INT NOT NULL,
+  -- 2025-02-12 박양하: 포인트 상품 이미지 추가
+  `point_product_image_url` VARCHAR(255) NOT NULL,
   `created_at` TIMESTAMP NOT NULL,
   `modified_at` TIMESTAMP NOT NULL,
   `deleted_at` TIMESTAMP NULL,
@@ -176,7 +178,7 @@ CREATE TABLE `comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 13. review_like
--- like는 예약어이므로 백틱(`)으로 감싸야 함.
+
 CREATE TABLE `review_like` (
 -- 25-02-12 하채린: like_id -> review_like_id 로 수정 
   `review_like_id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -208,7 +210,7 @@ CREATE TABLE `point` (
   `point_id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(30) NOT NULL,
   `reference_point_id` BIGINT NULL,
-  `receipt_id` BIGINT NOT NULL,
+  `receipt_id` BIGINT NULL,
   `transaction_type` VARCHAR(10) NULL,
   `point` INT NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
