@@ -400,6 +400,6 @@ erDiagram
 <br>
 
 <h1 id="Our-Playground">🗂️ Our Playground</h1>
-<div>
+<img src="https://github.com/user-attachments/assets/7278f3dc-8f88-4bef-ac78-378a35876cd3">
    <a href="https://www.notion.so/be15_1st_Project_DB-5c52900ed26b42ad812641a28fe85249"><text><strong>| 📓 Notion |</text></strong></a>
-</div>
+
