@@ -23,16 +23,20 @@ BEGIN
 	 
 	 -- 2.신고 테이블 데이터 추가
     INSERT 
-	   INTO report(report_type_id
-		            , user_id
-						, comment_id
-						, report_comment
-						, created_at)
-	 VALUES(report_type_id
+	   INTO report(
+		     report_type_id
+		   , user_id
+		   , comment_id
+			, report_comment
+			, created_at
+			)
+	 VALUES(
+	         report_type_id
 	       , reporting_user_id
 			 , reported_comment_id
 			 , report_comment
-			 , CURRENT_TIMESTAMP);
+			 , CURRENT_TIMESTAMP
+			 );
 	 
 	 
 	 -- 3. 만약 신고수가 5라면
@@ -49,9 +53,19 @@ BEGIN
 			
 			-- 3.2 재제 내역 추가
 			INSERT
-			  INTO penalty_history
-			  (user_id, admin_id, penalty_reason, start_penalty_at, end_penalty_at)
-			  VALUES(reported_user_id, "user01", "시스템 정지", CURRENT_TIMESTAMP, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY));
+			  INTO penalty_history(
+			       user_id, admin_id
+					, penalty_reason
+					, start_penalty_at
+					, end_penalty_at
+					)
+			  VALUES(
+			        reported_user_id
+					  , "user01"
+					  , "시스템 정지"
+					  , CURRENT_TIMESTAMP
+					  , DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY)
+					  );
 		END if;
 END $$
 
@@ -65,16 +79,18 @@ DELIMITER ;
 3. 회원 누적 신고수 확인
 4. 제제 내역 확인
 */
-DESCRIBE user;
-SELECT * FROM user;
-SELECT * FROM report;
-SELECT * FROM comment;
 START TRANSACTION;
 
 call report_comments('user01', 2 , 8, '못생겼어');   -- (1)                 
-SELECT * FROM report;                               -- (2)
-SELECT * FROM user;                                 -- (3)
-SELECT * FROM penalty_history;                      -- (4)
+SELECT * 
+  FROM report;                                       -- (2)
+  
+SELECT *
+  FROM user;                                        -- (3)
+  
+SELECT * 
+  FROM penalty_history;                             -- (4)
+  
 ROLLBACK;
 
 

@@ -23,8 +23,20 @@ BEGIN
 	 
 	 -- 신고 테이블 데이터 추가
     INSERT 
-	   INTO report(report_type_id, user_id, review_id, report_comment, created_at)
-	 VALUES(report_type_id, reporting_user_id, reported_review_id, report_comment, CURRENT_TIMESTAMP);
+	   INTO report(
+		     report_type_id
+		   , user_id
+			, review_id
+			, report_comment
+			, created_at
+			)
+	 VALUES(
+	        report_type_id
+			, reporting_user_id
+			, reported_review_id
+			, report_comment
+			, CURRENT_TIMESTAMP
+			);
 	 
 	 -- 3. 만약 신고수가 5라면
 	 SELECT reported_count INTO counts
@@ -39,12 +51,19 @@ BEGIN
 			
 			-- 3.2 재제 내역 추가
 			INSERT
-			  INTO penalty_history
-			  ( user_id, admin_id
-			  , penalty_reason
-			  , start_penalty_at
-			  , end_penalty_at)
-			VALUES(reported_user_id, "user01", "시스템 정지", CURRENT_TIMESTAMP, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY));
+			  INTO penalty_history( 
+			       user_id, admin_id
+			      , penalty_reason
+			      , start_penalty_at
+			      , end_penalty_at
+					)
+			VALUES(
+			        reported_user_id
+					, "user01"
+					, "시스템 정지"
+					, CURRENT_TIMESTAMP
+					, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY)
+					);
 		END if;
 
 END //
@@ -57,16 +76,23 @@ DELIMITER ;
 2. 신고 테이블 데이터 추가 확인
 */
 
-SELECT * FROM user;
-SELECT * FROM report;
-SELECT * FROM review;
+SELECT * 
+  FROM user;
+SELECT * 
+  FROM report;
+SELECT * 
+  FROM review;
 START TRANSACTION;
 
 call report_review('user01', 2 , 8, '못생겼어');    -- (1)
 
-SELECT * FROM report;                               -- (2)
+SELECT * 
+  FROM report;                               -- (2)
 
-SELECT * FROM user;                                 -- (3)
+SELECT * 
+  FROM user;                                 -- (3)
 
-SELECT * FROM penalty_history;                      -- (4)
+SELECT * 
+  FROM penalty_history;                      -- (4)
+  
 ROLLBACK;

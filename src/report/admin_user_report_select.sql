@@ -9,7 +9,7 @@ CREATE PROCEDURE admin_report_select(
 )
 BEGIN 
 	if (SELECT authority_id FROM user WHERE user_id = p_admin_id) =3 then
-		SELECT   user_id
+		SELECT  user_id
       		, comment_id
       		, review_id
       		, report_comment
@@ -28,6 +28,10 @@ CALL admin_report_select('user03','pw03');
 -- 2. 아이디 입력 실패시 메세지 출력
 CALL admin_report_select('user01','pw01');
    
-SELECT * FROM authority;
-SELECT * FROM user;
+SELECT * 
+  FROM authority;
+
+SELECT * 
+  FROM user;
+
 DESCRIBE user;
