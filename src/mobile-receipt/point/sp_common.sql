@@ -1,0 +1,173 @@
+/*
+내용: 공통으로 사용되는 프로시저 모음
+목적: 중복 로직 제거 및 일관성 있는 처리
+작성자: 박양하
+
+변경 이력:
+2025-02-14 박양하
+- 최초 작성
+- 트랜잭션 관리, 사용자 검증, 영수증 검증 프로시저 통합
+*/
+
+DELIMITER $$
+
+/* 1. 트랜잭션 관리 프로시저 */
+CREATE PROCEDURE SP_TRANSACTION_MANAGE(
+    IN P_PROCEDURE_NAME VARCHAR(50)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Transaction failed';
+    END;
+
+    START TRANSACTION;
+END $$
+
+/* 2. 사용자 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_USER(
+    IN P_USER_ID VARCHAR(30)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+          FROM USER A
+         WHERE A.USER_ID = P_USER_ID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'User not found';
+    END IF;
+END $$
+
+/* 3. 영수증 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_RECEIPT(
+    IN P_RECEIPT_ID BIGINT,
+    IN P_CHECK_CANCELED BOOLEAN
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+          FROM RECEIPT A
+         WHERE A.RECEIPT_ID = P_RECEIPT_ID
+           AND (P_CHECK_CANCELED = FALSE OR A.IS_CANCELED = 'N')
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Receipt not found or already canceled';
+    END IF;
+END $$
+
+/* 4. 포인트 잔액 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_POINT_BALANCE(
+    IN P_USER_ID VARCHAR(30),
+    IN P_REQUIRED_POINT INT
+)
+BEGIN
+    DECLARE V_CURRENT_POINT INT;
+    
+    SELECT COALESCE(A.REMAINING_POINT, 0)
+      INTO V_CURRENT_POINT
+      FROM USER A
+     WHERE A.USER_ID = P_USER_ID;
+
+    IF V_CURRENT_POINT < P_REQUIRED_POINT THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Insufficient point balance';
+    END IF;
+END $$
+
+/* 5. 포인트 상품 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_POINT_PRODUCT(
+    IN P_POINT_PRODUCT_ID BIGINT,
+    IN P_QUANTITY INT,
+    OUT P_PRODUCT_PRICE INT
+)
+BEGIN
+    DECLARE V_CURRENT_STOCK INT;
+    
+    SELECT A.PRICE
+         , A.QUANTITY 
+      INTO P_PRODUCT_PRICE
+         , V_CURRENT_STOCK
+      FROM POINT_PRODUCT A
+     WHERE A.POINT_PRODUCT_ID = P_POINT_PRODUCT_ID
+       AND A.DELETED_AT IS NULL;
+
+    IF P_PRODUCT_PRICE IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Product not found or deleted';
+    END IF;
+
+    IF V_CURRENT_STOCK < P_QUANTITY THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Not enough stock';
+    END IF;
+END $$
+
+/* 6. 포인트 거래 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_POINT_TRANSACTION(
+    IN P_REFERENCE_POINT_ID BIGINT,
+    OUT P_ORIG_TYPE VARCHAR(10),
+    OUT P_ORIG_POINT INT
+)
+BEGIN
+    DECLARE V_IS_CANCELED ENUM('Y','N') DEFAULT 'N';
+    
+    SELECT A.TRANSACTION_TYPE
+         , A.POINT
+         , A.IS_CANCELED
+      INTO P_ORIG_TYPE
+         , P_ORIG_POINT
+         , V_IS_CANCELED
+      FROM POINT A
+     WHERE A.POINT_ID = P_REFERENCE_POINT_ID;
+
+    IF P_ORIG_TYPE IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Original transaction not found';
+    END IF;
+
+    IF V_IS_CANCELED = 'Y' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'This transaction is already canceled';
+    END IF;
+END $$
+
+/* 7. 중복 영수증 검증 프로시저 */
+CREATE PROCEDURE SP_VALIDATE_DUPLICATE_RECEIPT(
+    IN P_USER_ID VARCHAR(30),
+    IN P_STORE_ID INT,
+    IN P_CARD_COMPANY_ID INT,
+    IN P_AMOUNT INT,
+    IN P_TRANSACTION_STATUS VARCHAR(10)
+)
+BEGIN
+    DECLARE V_COUNT INT;
+    
+    SELECT COUNT(*)
+      INTO V_COUNT
+      FROM RECEIPT A
+     WHERE A.USER_ID = P_USER_ID
+       AND A.STORE_ID = P_STORE_ID
+       AND A.CARD_COMPANY_ID = P_CARD_COMPANY_ID
+       AND A.TRANSACTION_STATUS = P_TRANSACTION_STATUS
+       AND A.AMOUNT = P_AMOUNT
+       AND A.CREATED_AT >= NOW() - INTERVAL 10 SECOND;
+
+    IF V_COUNT > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Duplicate receipt detected';
+    END IF;
+END $$
+
+/* 8. 포인트 적립액 계산 함수 */
+CREATE FUNCTION FN_CALCULATE_POINT(
+    P_AMOUNT INT
+) RETURNS INT
+DETERMINISTIC
+BEGIN
+    RETURN FLOOR(P_AMOUNT * 0.02);
+END $$
+
+DELIMITER ;

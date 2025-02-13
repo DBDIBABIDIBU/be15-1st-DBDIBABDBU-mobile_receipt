@@ -1,0 +1,48 @@
+/*
+내용: 포인트 적립/사용/교환 내역 조회 쿼리
+목적: 사용자의 포인트 관련 모든 내역 조회
+작성자: 박양하
+
+변경 이력:
+2025-02-14 박양하
+- 포인트 교환 내역 조회 추가
+- 교환 가능 상품 조회 추가
+*/
+
+/* 1. 포인트 내역 조회 */
+SELECT A.CREATED_AT
+     , A.TRANSACTION_TYPE
+     , A.POINT
+  FROM POINT A
+  LEFT JOIN POINT_EXCHANGE_HISTORY B
+    ON A.USER_ID = B.USER_ID
+   AND A.CREATED_AT = B.CREATED_AT
+ WHERE A.USER_ID = 'test_user1'
+ ORDER BY A.CREATED_AT DESC;
+
+/* 2. 포인트 교환 내역 조회 */
+SELECT A.CREATED_AT
+     , B.PRODUCT_NAME
+     , B.PRICE AS POINT_PRICE
+     , A.QUANTITY
+     , (B.PRICE * A.QUANTITY) AS TOTAL_POINT
+  FROM POINT_EXCHANGE_HISTORY A
+  JOIN POINT_PRODUCT B
+    ON A.POINT_PRODUCT_ID = B.POINT_PRODUCT_ID
+ WHERE A.USER_ID = 'test_user1'
+ ORDER BY A.CREATED_AT DESC;
+
+/* 3. 교환 가능한 상품 목록 조회 */
+SELECT A.POINT_PRODUCT_ID
+     , A.PRODUCT_NAME
+     , A.POINT_PRODUCT_IMAGE_URL
+     , A.PRICE AS POINT_PRICE
+     , A.QUANTITY AS REMAINING_STOCK
+     , CASE 
+         WHEN A.QUANTITY > 0 THEN '교환가능'
+         ELSE '재고없음'
+       END AS AVAILABILITY
+  FROM POINT_PRODUCT A
+ WHERE A.DELETED_AT IS NULL
+   AND A.QUANTITY > 0
+ ORDER BY A.PRICE ASC;
