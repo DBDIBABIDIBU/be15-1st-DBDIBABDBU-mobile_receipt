@@ -6,11 +6,11 @@ BEGIN
 	INSERT 
 	  INTO notification_history (notification_type_id, user_id, created_at)
 			SELECT 
-    		   4,    -- 알림 타입
-            review.user_id,                             -- 리뷰 작성자 ID
-            NOW() AS created_at                   -- 알림 생성일 (현재 시간)
-          FROM review 
-          LEFT JOIN (
+    		        4                                           -- 알림 타입
+					, review.user_id                             -- 리뷰 작성자 ID
+               , NOW() AS created_at                           -- 알림 생성일 (현재 시간)
+           FROM review 
+           LEFT JOIN (
                SELECT 
                       review_id
 						  , COUNT(*) AS like_count            -- 각 리뷰의 좋아요 개수 계산
@@ -75,11 +75,8 @@ VALUES
   (16, 'user08', NOW()),
   (16, 'user09', NOW()),
   (18,'user10', NOW());
-  SELECT * FROM review_like;
-  SELECT * FROM review;
-  SELECT * FROM notification_history;
   
-START TRANSACTION;
+
 
 call notify_best_review_selection();         -- (1)
   
@@ -99,8 +96,8 @@ SELECT                                       -- (2)
          WHERE review.created_at >= DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')  -- 지난달 작성된 리뷰 필터링
          AND review.created_at < DATE_FORMAT(NOW(), '%Y-%m-01')
          ORDER BY like_count DESC           -- 추천 수 내림차순
-         LIMIT 3;                      
-SELECT * FROM notification_history;
-ROLLBACK;
+         LIMIT 3;    
+                  
+SELECT * FROM notification_history;      -- (3)
 
-DESCRIBE notification_history;
+ROLLBACK;

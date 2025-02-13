@@ -12,10 +12,16 @@ BEGIN
 		 WHERE store_id = NEW.store_id;
 		IF (SELECT is_alarm_enabled FROM user WHERE user_id = seller_id) = 'Y' THEN
     		-- 알림 삽입
-    		INSERT INTO notification_history 
-	 		(user_id, notification_type_id, created_at)
-         VALUES 
-	      (seller_id, 5, CURRENT_TIMESTAMP);     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
+    		INSERT INTO notification_history (
+			  user_id
+			, notification_type_id
+			, created_at
+			)
+         VALUES (
+			seller_id
+			, 5
+			, CURRENT_TIMESTAMP
+			);     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
 		END if;
 END //
 DELIMITER ;
@@ -27,18 +33,29 @@ SELECT * FROM user;
 2. 리뷰 테이블 확인
 3. 알림 테이블 확인
 */
-SELECT * FROM review;
 START TRANSACTION;
 
 INSERT
-  INTO review
-   (user_id, store_id, content, rating, created_at, modified_at)
-	values
-	('user01', 8, '너무 맛있어요',5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);   -- (1)
+  INTO review(
+    user_id
+  , store_id
+  , content
+  , rating
+  , created_at
+  , modified_at
+  )
+VALUES(
+  'user01'
+  , 8
+  , '너무 맛있어요'
+  , 5
+  , CURRENT_TIMESTAMP
+  , CURRENT_TIMESTAMP
+);                               -- (1)
 
 SELECT *
   FROM review
- WHERE user_id = 'user01';                                         -- (2)
+ WHERE user_id = 'user01';       -- (2)
  
 SELECT * 
   FROM notification_history;     -- (3)

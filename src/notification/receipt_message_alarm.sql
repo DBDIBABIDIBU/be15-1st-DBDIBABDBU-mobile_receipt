@@ -1,5 +1,4 @@
 DELIMITER //
-
 CREATE TRIGGER after_receipt_insert
 AFTER INSERT ON receipt
 FOR EACH ROW

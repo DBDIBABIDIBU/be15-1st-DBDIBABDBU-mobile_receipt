@@ -37,8 +37,16 @@ BEGIN
 	
 	    -- 피신고 횟수가 3 이면 경고 알림 추가
 	    IF count = 3 THEN
-	        INSERT INTO notification_history (user_id, notification_type_id, created_at)
-	        VALUES (reported_user_id, 3, CURRENT_TIMESTAMP); -- notification_type_id 2는 "리뷰 3회 신고 경고" 가정
+	        INSERT INTO notification_history (
+			    user_id
+				, notification_type_id
+				, created_at
+				)
+	        VALUES (
+			    reported_user_id
+				, 3
+				, CURRENT_TIMESTAMP
+				); -- notification_type_id 2는 "리뷰 3회 신고 경고" 가정
 	    END IF;
 	 END IF; 
 END $$
@@ -54,25 +62,25 @@ SELECT * FROM notification_type;
 5. 댓글 신고 데이터 확인
 6. 알림 데이터 확인
 */
-SELECT * FROM report;
 
 START TRANSACTION;
 call report_review('user01', 2 , 3, '못생겼어');    -- (1)
 
-SELECT * FROM report;                              -- (2)
+SELECT * 
+  FROM report;                                      -- (2)
 
-SELECT * FROM notification_history;                -- (3)
-SELECT * FROM user;
+SELECT * 
+  FROM notification_history;                        -- (3)
+  
+SELECT * 
+  FROM user;
 
 call report_comment('user01', 2 , 3, '못생겼어');  -- (4)
 
-SELECT * FROM report;                              -- (5)
+SELECT * 
+  FROM report;                                     -- (5)
 
-SELECT * FROM notification_history;                 -- (6)
-SELECT * FROM notification_type;
-SELECT * FROM report_type;
+SELECT * 
+  FROM notification_history;                       -- (6)
+  
 ROLLBACK;
-
-UPDATE user
-SET reported_count = 3
-WHERE user_id='user03';

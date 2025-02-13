@@ -7,10 +7,16 @@ FOR EACH ROW
 BEGIN
 	  IF (SELECT is_alarm_enabled FROM user WHERE user_id = NEW.user_id) = 'Y' THEN
 	    -- 알림 삽입
-	    INSERT INTO notification_history 
-		 (user_id, notification_type_id, created_at)
-	    VALUES 
-		 (NEW.user_id, 4, CURRENT_TIMESTAMP);     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
+	    INSERT INTO notification_history (
+		   user_id
+			, notification_type_id
+			, created_at
+		 )
+	    VALUES (
+		 NEW.user_id
+		 , 4
+		 , CURRENT_TIMESTAMP
+		 );     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
 	  END if;
 END //
 DELIMITER ;
@@ -36,11 +42,11 @@ SELECT user_id
  
 SELECT * 
   FROM penalty_history 
- WHERE user_id = 'user10';            -- (3)
+ WHERE user_id = 'user10';                                         -- (3)
 
 SELECT * 
   FROM notification_history 
- WHERE user_id='user10';        --  (4)
+ WHERE user_id='user10';                                          --  (4)
 
 ROLLBACK;
 

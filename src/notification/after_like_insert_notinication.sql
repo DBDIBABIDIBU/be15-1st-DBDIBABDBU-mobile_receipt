@@ -14,10 +14,16 @@ BEGIN
 	 IF (SELECT is_alarm_enabled FROM user WHERE user_id = review_author_id) = 'Y' THEN
 	    -- 알림 삽입
 	    INSERT 
-		   INTO notification_history 
-			(user_id, notification_type_id, created_at)
-	    VALUES 
-		   (review_author_id, 1, NOW());     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
+		   INTO notification_history (
+			  user_id
+			, notification_type_id
+			, created_at
+		 )
+	    VALUES (
+		   review_author_id
+		 , 1
+		 , NOW()
+		 );     /* notification_type_id는 임의의 알림 메세지를 참조하는 id */
 	 END if;
 END $$
 DELIMITER ;
@@ -32,11 +38,24 @@ DELIMITER ;
 -- 테스트 시작
 START TRANSACTION;    -- 테스트를 위한 트랜잭션 시작
 
-SELECT * FROM `review_like`;    -- (1)
+SELECT * 
+  FROM `review_like`;    -- (1)
 
-INSERT INTO `review_like`(user_id, review_id, created_at)
-VALUES('user03', 8, CURRENT_TIMESTAMP);     -- (2)
+INSERT INTO `review_like`(
+  user_id
+, review_id
+, created_at
+)
+VALUES(
+  'user03'
+, 8
+, CURRENT_TIMESTAMP
+);                       -- (2)
 
-SELECT * FROM `review_like`; -- (3)
-SELECT * FROM notification_history;
+SELECT * 
+  FROM `review_like`;    -- (3)
+  
+SELECT * 
+  FROM notification_history;
+  
 ROLLBACK;     -- 테스트 이후 데이터 유지 위한 데이터 롤백
