@@ -12,19 +12,20 @@ flowchart TD
     H -->|No| I[에러: 재고 부족]
     H -->|Yes| J[총 필요 포인트 계산]
 
-    J --> K[트랜잭션 시작]
+    %% 트랜잭션 시작
+    J --> K[START TRANSACTION]
     K --> L[SP_MANAGE_POINT 호출]
     L --> M[상품 재고 차감]
     M --> N[교환 이력 기록]
-    N --> O[커밋]
+    N --> O[COMMIT]
     O --> P[종료]
 
     %% 에러 처리
-    D --> Q[롤백]
+    D --> Q[에러 발생]
     G --> Q
     I --> Q
-    L -->|실패| Q
-    M -->|실패| Q
-    N -->|실패| Q
-    Q --> R[에러 발생]
+    L -->|실패| R[ROLLBACK]
+    M -->|실패| R
+    N -->|실패| R
+    R --> Q
 ```
