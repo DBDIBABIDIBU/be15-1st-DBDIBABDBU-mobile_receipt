@@ -1,7 +1,7 @@
 -- review
 
 -- 사전에 필요한 데이터 삽입
-INSERT INTO review (
+INSERT INTO `review` (
   user_id, 
   store_id, 
   content, 
@@ -107,7 +107,7 @@ VALUES ('user10', 4, '맛집 인정이요.', 5, NOW(), NOW());
 -- 리뷰 당 좋아요 카운트 함수
 DELIMITER //
 
-CREATE FUNCTION get_likes_count(input_review_id BIGINT)
+CREATE FUNCTION get_likes_count(review_id BIGINT)
 RETURNS INT
 BEGIN
 DECLARE likes_count INT;
@@ -115,7 +115,7 @@ DECLARE likes_count INT;
 
 SELECT COUNT(*) INTO likes_count
 FROM review_like
-WHERE review_id = input_review_id;
+WHERE review_id = review_id;
 
 RETURN likes_count;
 END //
@@ -188,6 +188,17 @@ SELECT
  ORDER BY COALESCE(l.likes_count, 0) DESC
  LIMIT 3;
 
+-- 댓글 조회
+SELECT 
+       comment_id
+     , user_id
+     , review_id
+     , content
+     , created_at
+  FROM comment 
+ WHERE review_id = 1
+ ORDER BY created_at;
+
 -- 리뷰 수정
 UPDATE review
    SET content = '사장님이 착하고 가격이 친절해요.'
@@ -195,20 +206,7 @@ UPDATE review
      , modified_at = NOW()
  WHERE review_id = 11;
  
--- 리뷰 소프트딜리트
-UPDATE review
-   SET deleted_at = NOW()
- WHERE review_id = 1;
  
--- 25-02-13 하채린 : 팀원들과 논의 끝에 리뷰는 소프트딜리트만 하기로 결정
--- 리뷰 하드딜리트
--- DELETE FROM review
--- WHERE deleted_at IS NOT NULL
--- AND deleted_at < NOW() - INTERVAL 1 YEAR;
-
--- 회원, 매장이 하드딜리트 될 때
--- 리뷰, 댓글, 리뷰, 좋아요 같이 삭제되는 지 확인용
-
 DELETE FROM user
  WHERE user_id = 'user01';
  
