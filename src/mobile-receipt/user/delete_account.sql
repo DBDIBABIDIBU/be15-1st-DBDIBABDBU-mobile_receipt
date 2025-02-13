@@ -11,16 +11,7 @@ BEGIN
     DECLARE password_correct INT DEFAULT 0;
 
     -- 1. 비밀번호 검증
-    SELECT 
-	 		  COUNT(*) INTO password_correct
-      FROM user
-     WHERE user_id = p_user_id 
-	    AND PASSWORD = p_password;
-
-    IF password_correct = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = '회원 탈퇴 실패: 회원의 정보가 일치하지 않습니다';
-    END IF;
+	 CALL sp_check_password_match(p_user_id,p_password);
 
     -- 2. 회원 권한 확인
     SELECT 
@@ -83,7 +74,7 @@ SELECT
 		, s.deleted_at '매장 삭제 일시'
  FROM user u
  JOIN store s ON u.user_id = s.user_id
- WHERE user_id = @deleted_id;
+ WHERE U.user_id = @deleted_id;
  
  
 -- 2. 비밀번호 틀림(실패)
