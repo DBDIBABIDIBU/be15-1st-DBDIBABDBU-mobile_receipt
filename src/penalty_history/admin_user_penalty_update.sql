@@ -15,11 +15,20 @@ BEGIN
      WHERE user_id = p_user_id;
 
     -- 2. 제제 내역 삽입
-    INSERT 
-	   INTO penalty_history 
-	 (user_id, admin_id, penalty_reason, start_penalty_at, end_penalty_at)
-    VALUES 
-	 (p_user_id, p_admin_id, p_reason, CURRENT_TIMESTAMP, DATE_ADD(NOW(), INTERVAL 7 DAY));
+    INSERT INTO penalty_history (
+	   user_id
+	 , admin_id
+	 , penalty_reason
+	 , start_penalty_at
+	 , end_penalty_at
+	 )
+    VALUES (
+	   p_user_id
+	 , p_admin_id
+	 , p_reason
+	 , CURRENT_TIMESTAMP
+	 , DATE_ADD(NOW(), INTERVAL 7 DAY)
+	 );
 
 END //
 
