@@ -11,7 +11,7 @@ BEGIN
     DECLARE v_account_status VARCHAR(10);
     DECLARE v_user_exists INT DEFAULT 0;
 
-    -- 1. 사용자 존재 여부 및 계정 상태 확인
+    -- 1. 회원이 입력한 ID와 Password로 유효성 검사 처리
     SELECT 
 	 		    COUNT(*)
 			  , account_status 
@@ -42,9 +42,6 @@ BEGIN
         WHEN '정지' THEN
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = '로그인 실패: 정지된 계정입니다. 관리자에게 문의하세요.';
-        ELSE
-        		SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = '로그인 실패: 알 수 없는 계정 상태입니다. 관리자에게 문의하세요.';
     END CASE;
 END //
 
@@ -52,6 +49,7 @@ DELIMITER ;
 
 -- 테스트 케이스
 -- 1. 로그인 성공(활성화 계정, 로그인 성공)
+-- 예상결과: login_history에 로그인 기록(회원명, 로그인 일시, 로그인 IP, 디바이스 타입) 삽입
 CALL user_login('user03', 'pw03', '192.168.1.1', 'Windows 10');
 SELECT
 		  u.user_id 'user ID'
@@ -61,7 +59,8 @@ SELECT
 		, j.device_type '디바이스 타입'
   FROM user u
   JOIN login_history j ON u.user_id = j.user_id
-  WHERE u.user_id = 'user03';
+ WHERE u.user_id = 'user03';
 
--- 2. 탈퇴한 계정(로그인 실패)
+-- 2. 로그인 실패(탈퇴 계정의 경우)
+-- 예상결과: 에러 메시지('로그인 실패: 탈퇴한 계정입니다.') 출력하면서 에러 발생. 
 CALL user_login('user02', 'pw02', '192.168.1.1', 'Windows 10');

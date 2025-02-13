@@ -33,6 +33,9 @@ END //
 
 DELIMITER ;
 
+-- 1. 테스트 케이스(성공)
+-- 예상결과: user의 password 변경
+ 
 SET @updated_user_id = '';
 CALL update_password('user01', 'pw01', 'new01', @updated_user_id);
 SELECT
@@ -40,4 +43,14 @@ SELECT
 		, PASSWORD
   FROM user
  WHERE user_id =  @updated_user_id;
+ 
+-- 2. 테스트 케이스(실패): 기존 비밀번호와 불일치
+-- 예상결과: 에러 메시지('비밀번호 변경 실패: 기존 비밀번호가 일치하지 않습니다.') 출력
 
+SET @updated_user_id = '';
+CALL update_password('user01', 'pw02', 'new02', @updated_user_id);
+SELECT
+		 user_id
+		, PASSWORD
+  FROM user
+ WHERE user_id =  @updated_user_id;
