@@ -41,8 +41,6 @@ DELIMITER ;
 2. 사용자 상태 및 피신고 횟수 조회
 3. 제제 내역 확인
 */
-SELECT * FROM user;
-SELECT * FROM authority;
 START TRANSACTION;
 
 CALL admin_user_penalty_update('user08', 'user03', '욕설 사용');   -- (1)
@@ -53,9 +51,16 @@ SELECT user_id
   FROM user
  WHERE user_id = 'user08';   -- (2)
  
-SELECT * 
+SELECT 
+        penalty_history_id
+      , user_id
+      , admin_id
+      , penalty_reason
+      , start_penalty_at
+      , end_penalty_at
   FROM penalty_history 
  WHERE user_id = 'user10';    -- (3)
  
 ROLLBACK;
 
+DESCRIBE penalty_history;
