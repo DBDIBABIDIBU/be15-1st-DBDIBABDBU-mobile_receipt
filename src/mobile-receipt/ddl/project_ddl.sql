@@ -66,7 +66,7 @@ CREATE TABLE `store` (
   `modified_at` TIMESTAMP NOT NULL DEFAULT(NOW()),
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`store_id`),
-  CONSTRAINT `FK_USER_STORE` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+  CONSTRAINT `FK_USER_STORE` FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
   CONSTRAINT `FK_CATEGORY_STORE` FOREIGN KEY (`category_id`) REFERENCES `category`(`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
