@@ -8,40 +8,19 @@ CREATE OR REPLACE PROCEDURE delete_account(
 )
 BEGIN
     DECLARE authority_name VARCHAR(30);
-    DECLARE user_exists INT DEFAULT 0;
     DECLARE password_correct INT DEFAULT 0;
 
-    -- 1. 사용자 존재 여부 확인
-    SELECT 
-	 		  COUNT(*) INTO user_exists
-    FROM user
-    WHERE user_id = p_user_id;
+    -- 1. 비밀번호 검증
+	 CALL sp_check_password_match(p_user_id,p_password);
 
-    IF user_exists = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = '회원 탈퇴 실패: 존재하지 않는 사용자입니다.';
-    END IF;
-
-    -- 2. 비밀번호 검증
-    SELECT 
-	 		  COUNT(*) INTO password_correct
-      FROM user
-     WHERE user_id = p_user_id 
-	    AND PASSWORD = p_password;
-
-    IF password_correct = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = '회원 탈퇴 실패: 비밀번호가 일치하지 않습니다.';
-    END IF;
-
-    -- 3. 회원 권한 확인
+    -- 2. 회원 권한 확인
     SELECT 
 	 		  a.authority_name INTO authority_name
     	FROM user u
       JOIN authority a ON u.authority_id = a.authority_id
      WHERE u.user_id = p_user_id;
 
-    -- 4. 탈퇴 처리 로직
+    -- 3. 탈퇴 처리 로직
     CASE 
         -- 일반 사용자(USER) 탈퇴 (비활성화 처리)
         WHEN authority_name = 'USER' THEN
@@ -63,8 +42,7 @@ BEGIN
 
         -- 관리자(ADMIN) 영구 삭제
         WHEN authority_name = 'ADMIN' THEN
-            -- 관리자 관련 데이터 삭제 (로그, 리뷰, 댓글 등) -> on delete cascade 제한조건 추가?
-
+        
             -- 관리자 계정 최종 삭제
             DELETE 
 				  FROM user 
@@ -82,6 +60,8 @@ DELIMITER ;
 
 -- 테스트 케이스
 -- 1. 판매자 탈퇴(성공) -> 관련 매장 비활성화 후 계정 비활성화
+-- 예상결과: Store 테이블의 deleted_at 컬럼에 삭제 시점 기록, User 테이블의 account_status를 '탈퇴'로 변경하고 
+-- deleted_at에 회원 삭제시점에 대한 기록이 포함되어 있다. 
 
 SET @deleted_id = '';
 CALL delete_account('user02', 'pw02', @deleted_id);
@@ -94,8 +74,9 @@ SELECT
 		, s.deleted_at '매장 삭제 일시'
  FROM user u
  JOIN store s ON u.user_id = s.user_id
- WHERE user_id = @deleted_id;
+ WHERE U.user_id = @deleted_id;
  
  
 -- 2. 비밀번호 틀림(실패)
+-- 예상결과: 에러 메시지('회원 탈퇴 실패: 회원의 정보가 일치하지 않습니다')를 출력하고 에러 발생.
 CALL sp_user_deactivate('user02', 'wrongpassword');
