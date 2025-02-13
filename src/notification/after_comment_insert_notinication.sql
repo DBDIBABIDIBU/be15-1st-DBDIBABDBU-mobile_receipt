@@ -37,7 +37,12 @@ DELIMITER ;
 -- 테스트 시작
 START TRANSACTION;    -- 테스트를 위한 트랜잭션 시작
 
-SELECT * FROM notification_history;    -- (1)
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
+  FROM notification_history;    -- (1)
 
 INSERT INTO comment( 
   user_id
@@ -52,13 +57,17 @@ VALUES(
 , CURRENT_TIMESTAMP
 , CURRENT_TIMESTAMP);     -- (2)
 
-SELECT * 
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
   FROM notification_history; -- (3)
   
-SELECT * 
+SELECT
+        comment_id
+      , user_id
+      , review_id
+      , content
+      , created_at
   FROM COMMENT;
-  
-SELECT * 
-  FROM USER;
-
-ROLLBACK;     -- 테스트 이후 데이터 유지 위한 데이터 롤백

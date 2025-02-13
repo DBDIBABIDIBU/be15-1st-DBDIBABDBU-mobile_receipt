@@ -40,13 +40,22 @@ SELECT user_id
   FROM user
  WHERE user_id = 'user10';                                         -- (2)
  
-SELECT * 
+SELECT
+	     penalty_history_id
+	   , user_id
+	   , admin_id
+	   , penalty_reason
+	   , start_penalty_at
+	   , end_penalty_at
   FROM penalty_history 
  WHERE user_id = 'user10';                                         -- (3)
 
-SELECT * 
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
   FROM notification_history 
  WHERE user_id='user10';                                          --  (4)
 
 ROLLBACK;
-

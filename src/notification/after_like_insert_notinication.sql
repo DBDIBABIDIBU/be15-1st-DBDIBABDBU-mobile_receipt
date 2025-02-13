@@ -38,7 +38,10 @@ DELIMITER ;
 -- 테스트 시작
 START TRANSACTION;    -- 테스트를 위한 트랜잭션 시작
 
-SELECT * 
+SELECT
+        review_id
+      , user_id
+      , created_at
   FROM `review_like`;    -- (1)
 
 INSERT INTO `review_like`(
@@ -52,10 +55,16 @@ VALUES(
 , CURRENT_TIMESTAMP
 );                       -- (2)
 
-SELECT * 
+SELECT
+        review_id
+      , user_id
+      , created_at
   FROM `review_like`;    -- (3)
   
-SELECT * 
+SELECT
+        notification_type_id
+      , user_id
+      , created_at
   FROM notification_history;
   
 ROLLBACK;     -- 테스트 이후 데이터 유지 위한 데이터 롤백

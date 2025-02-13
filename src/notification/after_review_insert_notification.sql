@@ -53,11 +53,23 @@ VALUES(
   , CURRENT_TIMESTAMP
 );                               -- (1)
 
-SELECT *
+SELECT 
+        user_id
+      , store_id
+      , content
+      , rating
+      , created_at
+      , modified_at
   FROM review
  WHERE user_id = 'user01';       -- (2)
  
-SELECT * 
+SELECT 
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
   FROM notification_history;     -- (3)
 
 ROLLBACK;
+
+DESCRIBE notification_history;

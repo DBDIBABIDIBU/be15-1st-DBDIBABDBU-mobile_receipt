@@ -98,6 +98,12 @@ SELECT                                       -- (2)
          ORDER BY like_count DESC           -- 추천 수 내림차순
          LIMIT 3;    
                   
-SELECT * FROM notification_history;      -- (3)
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
+  FROM notification_history;      -- (3)
 
+DESCRIBE notification_history;
 ROLLBACK;

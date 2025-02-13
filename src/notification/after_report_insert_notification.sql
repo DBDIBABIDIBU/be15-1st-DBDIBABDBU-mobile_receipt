@@ -52,7 +52,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-SELECT * FROM notification_type;
 -- 테스트케이스 --
 /*
 1. 리뷰 신고
@@ -66,21 +65,47 @@ SELECT * FROM notification_type;
 START TRANSACTION;
 call report_review('user01', 2 , 3, '못생겼어');    -- (1)
 
-SELECT * 
+SELECT 
+        report_id
+      , report_type_id
+      , user_id
+      , comment_id
+      , review_id
+      , report_comment
+      , created_at
   FROM report;                                      -- (2)
 
-SELECT * 
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
   FROM notification_history;                        -- (3)
   
-SELECT * 
+SELECT
+        user_id
+      , reported_count
   FROM user;
 
 call report_comment('user01', 2 , 3, '못생겼어');  -- (4)
 
-SELECT * 
+SELECT 
+        report_id
+      , report_type_id
+      , user_id
+      , comment_id
+      , review_id
+      , report_comment
+      , created_at
   FROM report;                                     -- (5)
 
-SELECT * 
-  FROM notification_history;                       -- (6)
+SELECT
+        notification_history_id
+      , notification_type_id
+      , user_id
+      , created_at
+  FROM notification_history;                         -- (6)
   
 ROLLBACK;
+
+DESCRIBE user;

@@ -21,13 +21,3 @@ END;
 
 DELIMITER ;
 
-
-
-
-SELECT * FROM notification_history;
-
-
-SELECT * FROM notification_type;
-
-
-SELECT * FROM receipt;
