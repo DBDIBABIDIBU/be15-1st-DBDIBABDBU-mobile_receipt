@@ -75,24 +75,36 @@ DELIMITER ;
 1. user01 회원이 user03 회원이 작성한 리뷰를 신고
 2. 신고 테이블 데이터 추가 확인
 */
-
-SELECT * 
-  FROM user;
-SELECT * 
-  FROM report;
-SELECT * 
-  FROM review;
 START TRANSACTION;
 
 call report_review('user01', 2 , 8, '못생겼어');    -- (1)
 
-SELECT * 
-  FROM report;                               -- (2)
+SELECT 
+        report_id
+      , report_type_id
+      , user_id
+      , comment_id
+      , review_id
+      , report_comment
+      , created_at
+  FROM report;  
+  WHERE user_id='user08';                             -- (2)
 
-SELECT * 
-  FROM user;                                 -- (3)
+SELECT 
+        user_id
+      , reported_count
+  FROM user
+  WHERE user_id='user08';                                 -- (3)
 
-SELECT * 
+SELECT
+        penalty_history_id
+      , user_id
+      , admin_id
+      , penalty_reason
+      , start_penalty_at
+      , end_penalty_at
   FROM penalty_history;                      -- (4)
   
 ROLLBACK;
+
+DESCRIBE penalty_history;

@@ -81,17 +81,34 @@ DELIMITER ;
 */
 START TRANSACTION;
 
-call report_comments('user01', 2 , 8, '못생겼어');   -- (1)                 
-SELECT * 
+call report_comments('user01', 2 , 8, '못생겼어');   -- (1)      
+           
+SELECT 
+        report_id
+      , report_type_id
+      , user_id
+      , comment_id
+      , review_id
+      , report_comment
+      , created_at
   FROM report;                                       -- (2)
   
-SELECT *
+SELECT
+        user_id
+      , reported_count
   FROM user;                                        -- (3)
   
-SELECT * 
+SELECT 
+        penalty_history_id
+      , user_id
+      , admin_id
+      , penalty_reason
+      , start_penalty_at
+      , end_penalty_at
   FROM penalty_history;                             -- (4)
   
 ROLLBACK;
 
+DESCRIBE penalty_history;
 
 

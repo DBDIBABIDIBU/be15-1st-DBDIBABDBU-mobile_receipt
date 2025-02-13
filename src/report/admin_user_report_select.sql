@@ -28,10 +28,4 @@ CALL admin_report_select('user03','pw03');
 -- 2. 아이디 입력 실패시 메세지 출력
 CALL admin_report_select('user01','pw01');
    
-SELECT * 
-  FROM authority;
-
-SELECT * 
-  FROM user;
-
 DESCRIBE user;
