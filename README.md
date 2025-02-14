@@ -261,6 +261,9 @@
     <summary>ERD Cloud 자세히 보기</summary>
     <div markdown="1">
         <img src="./assets/erdcloud.png" alt="ERD Diagram" style="max-width: 100%; height: auto;">
+    </div>
+</details>
+
 
 ```mermaid
 erDiagram
