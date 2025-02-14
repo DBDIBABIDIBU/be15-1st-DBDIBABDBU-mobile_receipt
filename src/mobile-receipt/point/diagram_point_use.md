@@ -1,11 +1,7 @@
 ```mermaid
 flowchart TD
     A[시작: SP_POINT_USE] --> B[입력값 검증<br/>금액>0, 사용유형 필수]
-    B --> C[사용자 검증<br/>SP_VALIDATE_USER]
-
-    C --> D{사용자 존재?}
-    D -->|No| E[에러: 사용자 없음]
-    D -->|Yes| F[포인트 잔액 검증<br/>SP_VALIDATE_POINT_BALANCE]
+    B --> F[포인트 잔액 검증<br/>SP_VALIDATE_POINT_BALANCE]
 
     F --> G{잔액 충분?}
     G -->|No| H[에러: 포인트 부족]
@@ -15,8 +11,7 @@ flowchart TD
     J --> K[종료]
 
     %% 에러 처리
-    E --> L[에러 발생]
-    H --> L
+    H --> L[에러 발생]
     I -->|실패| L
     J -->|실패| L
 ```
