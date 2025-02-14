@@ -240,6 +240,7 @@
 </details>
 
 <h3 id="table-spec">📋 테이블 명세서</h3>
+
 <details>
     <summary><b>테이블 명세서 상세보기</b></summary>
     <div markdown="1">
@@ -262,6 +263,7 @@
         <img src="./assets/erdcloud.png" alt="ERD Diagram" style="max-width: 100%; height: auto;">
     </div>
 </details>
+
 
 ```mermaid
 erDiagram
@@ -484,6 +486,7 @@ erDiagram
 
 <i><center><u>mermaid로 표현한 ERD</u></center></i>
 
+
 <h3 id="process-flow">🎖️ 핵심 로직 플로우차트</h3>
 
 <h4>1. 영수증 발행 프로세스</h4>
@@ -657,6 +660,13 @@ flowchart TD
         <img src="./assets/test_case_gif/receipt/09_결과 데이터 확인.gif" alt="결과 데이터 확인 테스트 데모" style="max-width: 100%; height: auto;">    
     </div>
 </details>
+<details>
+    <summary><b>레플리케이션 서버 테스트 상세보기</b></summary>
+    <div markdown="1">
+        <img src="./assets/test_case_gif/replication-server/레플리케이션서버.gif" alt="레플리케이션 서버 테스트 데모" style="max-width: 100%; height: auto;">    
+    </div>
+</details>
+
 <br>
 <br>
 <h1 id="Our-Playground">🗂️ Our Playground</h1>
