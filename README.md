@@ -77,30 +77,32 @@
 | :----------------------------------------------------------------------: | :----------------------------------------------------------------------: | :----------------------------------------------------------------------: |
 | <img src="./assets/profile_pic/태인프로필.jpg" width="180" height="180"> | <img src="./assets/profile_pic/성용프로필.jpg" width="180" height="180"> | <img src="./assets/profile_pic/양하프로필.png" width="180" height="180"> |
 |                [@Taein5415](https://github.com/Taein5415)                |              [@develup-psy](https://github.com/develup-psy)              |                  [@64etuor](https://github.com/64etuor)                  |
-|                                 **PSY**                                  |                               **C-Dragon**                               |                             **에임핵 냥꾼**                              |
 
-|                                **장건희**                                |                                **장현영**                                |                                **하채린**                                |
-| :----------------------------------------------------------------------: | :----------------------------------------------------------------------: | :----------------------------------------------------------------------: |
+
+|                                **장건희**                                |                               **장현영**                               |                                **하채린**                                |
+| :----------------------------------------------------------------------: |:-------------------------------------------------------------------:| :----------------------------------------------------------------------: |
 | <img src="./assets/profile_pic/건희프로필.png" width="180" height="180"> | <img src="./assets/profile_pic/현영프로필.png" width="180" height="180"> | <img src="./assets/profile_pic/채린프로필.jpg" width="180" height="180"> |
-|                 [@jang9465](https://github.com/jang9465)                 |                 [@memory-h](https://github.com/memory-h)                 |                   [@didiha](https://github.com/didiha)                   |
-|                               **쁘띠건희**                               |                                 **장PM**                                 |                             **안방 갱스터**                              |
+|                 [@jang9465](https://github.com/jang9465)                 |              [@memory-h](https://github.com/memory-h)               |                   [@didiha](https://github.com/didiha)                   | 
 
 </div>
 
-<br>
+<br><br>
 
 ## <span id="project">📹 Our Project</span>
 
 ### <span id="tech-stack">💻 기술 스택</span>
 
-<div align="center">
+<div>
   <img src="https://img.shields.io/badge/mariaDB-003545?style=for-the-badge&logo=mariaDB&logoColor=white">
-  <img src="https://img.shields.io/badge/linux-FCC624?style=for-the-badge&logo=linux&logoColor=black">
-  <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">
+  <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
   <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+  <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/Sourcetree-0052CC?style=for-the-badge&logo=sourcetree&logoColor=white">
 </div>
 
-<br>
+<br><br>
+
 <h5>프로젝트 목적</h5>
 본 프로젝트는 종이 영수증이 환경 오염의 주요 원인임을 인식하고, 이를 해결하기 위해 모바일 영수증 통합 관리 시스템을 구축하고자 합니다. 소비자와 판매자가 모두 편리하게 이용할 수 있는 이 시스템은 다양한 기능을 제공하여 종이 영수증 사용을 최소화하고, 환경 보호에 기여하는 것을 목표로 합니다.
   <br><br>
@@ -681,3 +683,5 @@ flowchart TD
 
 <img src="./assets/scrum_meeting.jpg" style="width: 100%; height: auto;">
 <center><i>매일 아침 8시 40분에 진행하는 Scrum Meeting</i></center>
+
+
