@@ -47,6 +47,9 @@ INSERT INTO store (
 '서울시 강남구', '테스트빌딩', '09:00-18:00', 4.5);
 
 -- 초기 상태 확인
+-- 1) 테스트용 데이터 등록 완료
+-- 2) Stored Procedures 등록 완료
+
 SELECT U.user_id
      , U.user_name
      , U.remaining_point
@@ -54,10 +57,15 @@ SELECT U.user_id
  ORDER BY U.user_id;
 
 -- 1. 영수증 발행 및 포인트 적립 테스트
+-- 초기 데이터 test_user1 잔여 포인트 1,000
+-- 시나리오:
+-- 1) test_user1이 가맹점에서 10,000원을 결제하고 모바일 영수증을 발행
+-- 2) 결제액의 2% (200포인트)를 본인 계정의 포인트로 적립
+
 CALL SP_ISSUE_RECEIPT(
     'test_user1', 1, 1,
-    '{"items": [{"name": "테스트상품", "price": 50000}]}',
-    500000, '신용'
+    '{"items": [{"name": "테스트상품", "price": 10000}]}',
+    10000, '신용'
 );
 
 SELECT U.user_id
@@ -82,7 +90,9 @@ SELECT U.user_id
    AND R.receipt_id = (SELECT MAX(receipt_id) FROM receipt);
 
 -- 2. 포인트 사용 테스트
-CALL SP_POINT_EXCHANGE('test_user1', 1, 1);
+-- 시나리오: test_user1이 500포인트 가격의 물품을 포인트로 구매
+
+CALL SP_POINT_EXCHANGE('test_user1', 1, 2);
 
 SELECT U.user_id
      , U.user_name
@@ -105,6 +115,10 @@ SELECT U.user_id
    AND P.point_id = (SELECT MAX(point_id) FROM point);
 
 -- 3. 포인트 취소 테스트
+-- 시나리오
+-- 1) test_user1이 본인의 마지막 결제 건을 취소 
+-- 2) 영수증이 취소처리 되고 적립되었던 200 포인트를 반환
+
 SELECT @receipt_id := MAX(receipt_id) 
   FROM receipt 
  WHERE user_id = 'test_user1' 
@@ -134,36 +148,55 @@ SELECT U.user_id
    AND R.receipt_id = @receipt_id;
 
 -- 4. 에러 케이스 테스트
-CALL SP_POINT_EXCHANGE('test_user2', 2, 1);
+-- 시나리오 1.
+-- test_user2(잔여 포인트: 500)가 1000 포인트의 물품 구매 시도
+
+CALL SP_POINT_EXCHANGE('test_user2', 2, 1); 
+
+-- 시나리오 2.
+-- test_user1이 1번 포인트 교환 물품(재고:9개)을 100개 구매 시도
 CALL SP_POINT_EXCHANGE('test_user1', 1, 100);
+
+-- 시나리오 3.
+-- test_user1이 '3. 포인트 취소 테스트'에서 이미 취소된 영수증에 대한 취소를 재시도
 CALL SP_CANCEL_RECEIPT(@receipt_id);
+
+-- 시나리오 4.
 -- 중복 결제 테스트 (10초 이내 동일 거래, 아래 코드 3줄 블락 후 Ctrl + F9)
+
 CALL SP_ISSUE_RECEIPT('test_user1', 1, 1, '{"items": [{"name": "테스트상품", "price": 10000}]}', 10000, '신용');
 DO SLEEP(1);
 CALL SP_ISSUE_RECEIPT('test_user1', 1, 1, '{"items": [{"name": "테스트상품", "price": 10000}]}', 10000, '신용');
 
-
 -- 최종 상태 확인
-SELECT U.user_id
-     , U.user_name
-     , U.remaining_point
-     , COUNT(DISTINCT R.receipt_id) AS total_receipts
-     , COUNT(DISTINCT P.point_id) AS total_point_transactions
-     , COUNT(DISTINCT PEH.point_exchange_id) AS total_exchanges
-     , SUM(CASE WHEN P.transaction_type = '적립' AND P.is_canceled = 'N' THEN P.point ELSE 0 END) AS total_earned
-     , SUM(CASE WHEN P.transaction_type = '사용' AND P.is_canceled = 'N' THEN P.point ELSE 0 END) AS total_used
+SELECT U.user_id AS 회원아이디
+     , U.user_name AS 회원명
+     , U.remaining_point AS 잔여포인트
+     , (SELECT COUNT(DISTINCT receipt_id) 
+          FROM receipt 
+         WHERE user_id = U.user_id) AS '영수증 발행횟수'
+     , (SELECT COUNT(DISTINCT point_exchange_id) 
+          FROM point_exchange_history 
+         WHERE user_id = U.user_id) AS '포인트 물품 교환 횟수'
+     , (SELECT SUM(point) 
+          FROM point 
+         WHERE user_id = U.user_id 
+           AND transaction_type = '적립' 
+           AND is_canceled = 'N') AS '총 적립액'
+     , (SELECT SUM(point) 
+          FROM point 
+         WHERE user_id = U.user_id 
+           AND transaction_type = '사용' 
+           AND is_canceled = 'N') AS '총 사용액'
   FROM user U
-  LEFT JOIN receipt R ON U.user_id = R.user_id
-  LEFT JOIN point P ON U.user_id = P.user_id
-  LEFT JOIN point_exchange_history PEH ON U.user_id = PEH.user_id
- GROUP BY U.user_id, U.user_name, U.remaining_point
  ORDER BY U.user_id;
 
-SELECT PP.point_product_id
-     , PP.product_name
-     , PP.price
-     , PP.quantity AS current_stock
-     , COUNT(PEH.point_exchange_id) AS total_exchanges
+SELECT PP.point_product_id AS '물품아이디'
+     , PP.product_name AS '물품명'
+     , PP.price AS '교환포인트'
+     , PP.quantity AS '재고수량'
+     , SUM(PEH.quantity) AS '총판매량'
+     , COUNT(PEH.point_exchange_id) AS '총 거래량'
   FROM point_product PP
   LEFT JOIN point_exchange_history PEH ON PP.point_product_id = PEH.point_product_id
  GROUP BY PP.point_product_id, PP.product_name, PP.price, PP.quantity
