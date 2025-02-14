@@ -7,6 +7,13 @@
 
 </div>
 <div align="center">
+  <a href="https://www.miricanvas.com/v/148c6fz">
+    <img src="https://img.shields.io/badge/📊_Project_Presentation-FF3366?style=for-the-badge&logoColor=white" alt="프로젝트 프레젠테이션">
+  </a>
+</div>
+<div align="center"><code>./assets/presentation/</code></div>
+<br>
+<div align="center">
 <a href="https://share.descript.com/view/bOhnBZC4LmI">
   <img src="https://img.shields.io/badge/Descript-프로젝트_소개_영상-blue" alt="프로젝트 소개 영상 보기">
 </a>
@@ -99,6 +106,8 @@
   <br><br>
  주요 기능으로는 모바일 영수증 발행 및 통합 관리, 간편한 리뷰 작성, 포인트 적립 및 리워드 시스템, 영수증 조회, 소비 패턴 분석, 매장별 데이터 분석 등이 있으며, 이를 통해 사용자들은 보다 스마트하고 친환경적인 소비를 실현할 수 있습니다.
  <br><br>
+
+<br>
 <details>
     <summary><b>🔍프로젝트 기획안 자세히 보기</b></summary>
     <div markdown="1">
@@ -263,7 +272,6 @@
         <img src="./assets/erdcloud.png" alt="ERD Diagram" style="max-width: 100%; height: auto;">
     </div>
 </details>
-
 
 ```mermaid
 erDiagram
@@ -485,7 +493,6 @@ erDiagram
 ```
 
 <i><center><u>mermaid로 표현한 ERD</u></center></i>
-
 
 <h3 id="process-flow">🎖️ 핵심 로직 플로우차트</h3>
 
