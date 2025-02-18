@@ -7,24 +7,27 @@
 2025-02-14 박양하
 - 최초 작성
 - 트랜잭션 관리, 사용자 검증, 영수증 검증 프로시저 통합
+
+2025-02-18 박성용
+- 롤백 미작동에 의한 트랜잭션 관리 프로시저 삭제
 */
 
 DELIMITER $$
 
-/* 1. 트랜잭션 관리 프로시저 */
-CREATE PROCEDURE SP_TRANSACTION_MANAGE(
-    IN P_PROCEDURE_NAME VARCHAR(50)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Transaction failed';
-    END;
+-- /* 1. 트랜잭션 관리 프로시저 */
+-- CREATE PROCEDURE SP_TRANSACTION_MANAGE(
+--     IN P_PROCEDURE_NAME VARCHAR(50)
+-- )
+-- BEGIN
+--     DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+--     BEGIN
+--         ROLLBACK;
+--         SIGNAL SQLSTATE '45000'
+--             SET MESSAGE_TEXT = 'Transaction failed';
+--     END;
 
-    START TRANSACTION;
-END $$
+--     START TRANSACTION;
+-- END $$
 
 /* 2. 사용자 검증 프로시저 */
 CREATE PROCEDURE SP_VALIDATE_USER(

@@ -28,6 +28,10 @@
 - 트랜잭션 범위 최소화
 - 검증 로직 트랜잭션 밖으로 이동
 - 포인트 계산 로직 분리
+
+2025-02-18 박성용
+-트랜잭션 롤백 미작동 문제 해결
+-트랜잭션 검증 로직 재위치
 */
 
 DELIMITER $$
@@ -42,6 +46,14 @@ CREATE PROCEDURE SP_ISSUE_RECEIPT(
 )
 BEGIN
     DECLARE V_NEW_RECEIPT_ID BIGINT;
+
+    /* 예외 처리 핸들러 최상단 위치 */
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Transaction failed';
+    END;
     
     /* 1. 검증 */
     CALL SP_VALIDATE_USER(P_USER_ID);
@@ -53,9 +65,12 @@ BEGIN
         '승인'
     );
     
-    /* 트랜잭션 시작 */
-    CALL SP_TRANSACTION_MANAGE('SP_ISSUE_RECEIPT');
-    
+    -- /* 트랜잭션 시작 */
+    -- CALL SP_TRANSACTION_MANAGE('SP_ISSUE_RECEIPT');
+
+    /* 트랜잭션 범위 유지 */
+    START TRANSACTION;
+
     /* 2. 영수증 발행 */
     INSERT INTO RECEIPT (
         USER_ID,
