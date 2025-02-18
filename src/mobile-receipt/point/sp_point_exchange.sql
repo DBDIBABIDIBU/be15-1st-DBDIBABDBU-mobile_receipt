@@ -31,6 +31,10 @@
 - 공통 프로시저 활용
 - 재고 락 처리 추가
 - 트랜잭션 관리 개선
+
+2025-02-18 박성용
+-트랜잭션 롤백 미작동 문제 해결
+-트랜잭션 검증 로직 재위치
 */
 
 DELIMITER $$
@@ -43,6 +47,15 @@ CREATE PROCEDURE SP_POINT_EXCHANGE (
 BEGIN
     DECLARE V_TOTAL_PRICE INT;
     DECLARE V_CURRENT_STOCK INT;
+
+    /* 예외 처리 핸들러 최상단 위치 */
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Transaction failed';
+    END;
+
     
     /* 1. 필수 파라미터 검증 */
     IF P_QUANTITY <= 0 THEN
@@ -53,8 +66,11 @@ BEGIN
     /* 2. 사용자 검증 */
     CALL SP_VALIDATE_USER(P_USER_ID);
     
-    /* 트랜잭션 시작 */
-    CALL SP_TRANSACTION_MANAGE('SP_POINT_EXCHANGE');
+     /* 트랜잭션 시작 */
+    -- CALL SP_TRANSACTION_MANAGE('SP_POINT_EXCHANGE');
+
+    /* 트랜잭션 범위 유지 */
+    START TRANSACTION;
     
     /* 3. 상품 검증 (재고 락 포함) */
     SELECT A.PRICE
