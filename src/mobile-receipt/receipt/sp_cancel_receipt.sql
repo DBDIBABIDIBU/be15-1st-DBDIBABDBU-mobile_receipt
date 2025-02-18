@@ -29,6 +29,10 @@
 - 트랜잭션 범위 최소화
 - 검증 로직 트랜잭션 밖으로 이동
 - 취소 영수증 ID 명시적 관리
+
+2025-02-18 박성용
+-트랜잭션 롤백 미작동 문제 해결
+-트랜잭션 검증 로직 재위치
 */
 
 DELIMITER $$
@@ -39,6 +43,14 @@ CREATE PROCEDURE SP_CANCEL_RECEIPT(
 BEGIN
     DECLARE V_USER_ID VARCHAR(30);
     DECLARE V_POINT_ID BIGINT;
+
+    /* 예외 처리 핸들러 최상단 위치 */
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Transaction failed';
+    END;
     
     /* 1. 원본 영수증 검증 */
     SELECT A.USER_ID
@@ -63,8 +75,11 @@ BEGIN
             SET MESSAGE_TEXT = 'Original point record not found';
     END IF;
     
-    /* 트랜잭션 시작 */
-    CALL SP_TRANSACTION_MANAGE('SP_CANCEL_RECEIPT');
+     /* 트랜잭션 시작 */
+    -- CALL SP_TRANSACTION_MANAGE('SP_CANCEL_RECEIPT');
+    
+    /* 트랜잭션 범위 유지 */
+    START TRANSACTION;
     
     /* 3. 원본 영수증 취소 처리 */
     UPDATE RECEIPT A
